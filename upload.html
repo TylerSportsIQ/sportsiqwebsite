@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SportsIQ — Upload your game film and let CourtIQ go to work." />
+  <title>SportsIQ | Upload Film</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <style>
+    /* ── Upload page specific styles ── */
+    .upload-hero {
+      background: var(--navy);
+      padding: 140px 5% 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(244,123,32,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244,123,32,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+    }
+    .upload-hero::after {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -60px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(244,123,32,0.11) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .upload-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+    .upload-hero-inner .section-label {
+      color: var(--orange);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .upload-hero-inner h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 800;
+      color: var(--white);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .upload-hero-inner h1 span { color: var(--orange); }
+    .upload-hero-inner p {
+      color: rgba(255,255,255,0.6);
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    /* ── Upload form section ── */
+    .upload-section {
+      background: var(--off-white);
+      padding: 80px 5%;
+    }
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .upload-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Form card ── */
+    .upload-form-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 48px;
+      box-shadow: 0 2px 24px rgba(21,36,68,0.08);
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid #dde2ec;
+      border-radius: 8px;
+      font-size: 0.97rem;
+      color: var(--navy);
+      background: var(--white);
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
+      .upload-form-card { padding: 28px 20px; }
+    }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      border: 2px dashed #c8d0e0;
+      border-radius: 10px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #f8f9fc;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      border-color: var(--orange);
+      background: rgba(244,123,32,0.04);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-zone-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(244,123,32,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .drop-zone-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--orange);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .drop-zone-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .drop-zone-sub {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+    }
+    .drop-zone-file-name {
+      margin-top: 14px;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      display: none;
+      margin-bottom: 24px;
+    }
+    .progress-wrap.visible { display: block; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .progress-bar-track {
+      height: 6px;
+      background: #e4e8f0;
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Status messages ── */
+    .status-msg {
+      display: none;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .status-msg.visible { display: block; }
+    .status-msg.success {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #166534;
+    }
+    .status-msg.error {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #991b1b;
+    }
+    .status-msg.info {
+      background: rgba(244,123,32,0.08);
+      border: 1px solid rgba(244,123,32,0.25);
+      color: var(--navy);
+    }
+
+    /* ── Submit button states ── */
+    #submit-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    #submit-btn.loading {
+      position: relative;
+      color: transparent;
+    }
+    #submit-btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    /* ── Info sidebar ── */
+    .upload-info-card {
+      background: var(--navy);
+      border-radius: 12px;
+      padding: 36px 32px;
+      color: var(--white);
+    }
+    .upload-info-card h3 {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 24px;
+    }
+    .info-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .info-step:last-child { margin-bottom: 0; }
+    .info-step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(244,123,32,0.15);
+      border: 1px solid rgba(244,123,32,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--orange);
+    }
+    .info-step-text strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .info-step-text p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .info-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin: 28px 0;
+    }
+    .info-note {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+    }
+    .info-note strong {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── Success panel ── */
+    #success-panel {
+      display: none;
+      background: var(--white);
+      border-radius: 12px;
+      padding: 56px 48px;
+      text-align: center;
+      box-shadow: 0 2px 24px rgba(21,36,68,0.08);
+    }
+    #success-panel.visible { display: block; }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(34,197,94,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .success-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: #16a34a;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #success-panel h2 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    #success-panel p {
+      color: var(--text-mid);
+      font-size: 0.97rem;
+      line-height: 1.75;
+      max-width: 400px;
+      margin: 0 auto 8px;
+    }
+    #success-game-id {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: rgba(21,36,68,0.35);
+      margin-top: 20px;
+      display: block;
+    }
+    .success-actions {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <a href="index.html"><img src="logo.png" alt="SportsIQ" /></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="upload.html" class="active">Upload Film</a></li>
+      <li><a href="contact.html" class="nav-cta">Get Started</a></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <div class="upload-hero">
+    <div class="upload-hero-inner">
+      <span class="section-label">CourtIQ Film Portal</span>
+      <h1>Upload Your<br /><span>Game Film</span></h1>
+      <p>Drop your footage below. CourtIQ analyzes every possession automatically and delivers your scouting report within minutes.</p>
+    </div>
+  </div>
+
+  <!-- UPLOAD SECTION -->
+  <section class="upload-section">
+    <div class="upload-grid">
+
+      <!-- LEFT: Form -->
+      <div>
+        <!-- Form card -->
+        <div class="upload-form-card" id="upload-form-card">
+
+          <div class="form-group">
+            <label>Team ID</label>
+            <input type="text" id="team-id" placeholder="e.g. team_001" autocomplete="off" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Game Date</label>
+              <input type="date" id="game-date" />
+            </div>
+            <div class="form-group">
+              <label>Opponent</label>
+              <input type="text" id="opponent" placeholder="e.g. East Side Eagles" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Location <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-mid);font-size:0.8rem;">(optional)</span></label>
+            <input type="text" id="location" placeholder="e.g. Home — Fieldhouse" />
+          </div>
+
+          <!-- Drop zone -->
+          <label style="display:block;font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">
+            Game Film
+          </label>
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" accept="video/mp4,video/quicktime,video/x-msvideo,video/*" />
+            <div class="drop-zone-icon">
+              <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="drop-zone-title">Drop video here or click to browse</div>
+            <div class="drop-zone-sub">MP4 recommended · No file size limit</div>
+            <div class="drop-zone-file-name" id="file-name-display"></div>
+          </div>
+
+          <!-- Progress -->
+          <div class="progress-wrap" id="progress-wrap">
+            <div class="progress-label">
+              <span id="progress-stage">Uploading...</span>
+              <span id="progress-pct">0%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+          </div>
+
+          <!-- Status messages -->
+          <div class="status-msg" id="status-msg"></div>
+
+          <button class="btn btn-primary" id="submit-btn" style="width:100%;justify-content:center;font-size:1rem;padding:16px;" disabled>
+            Upload Film &rarr;
+          </button>
+
+          <p style="margin-top:14px;font-size:0.78rem;color:var(--text-mid);text-align:center;line-height:1.6;">
+            Film is uploaded directly and securely to cloud storage.<br/>Your footage never passes through our servers.
+          </p>
+        </div>
+
+        <!-- Success panel (shown after upload) -->
+        <div id="success-panel">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2>Film Uploaded</h2>
+          <p>CourtIQ is now processing your footage. Your scouting report will be ready shortly.</p>
+          <span id="success-game-id"></span>
+          <div class="success-actions">
+            <button class="btn btn-primary" onclick="resetForm()">Upload Another</button>
+            <a href="index.html" class="btn btn-outline">Back to Home</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Info sidebar -->
+      <div>
+        <div class="upload-info-card">
+          <h3>How It Works</h3>
+
+          <div class="info-step">
+            <div class="info-step-num">1</div>
+            <div class="info-step-text">
+              <strong>Fill in Game Info</strong>
+              <p>Add your team ID, opponent, and game date so CourtIQ can tag the footage correctly.</p>
+            </div>
+          </div>
+
+          <div class="info-step">
+            <div class="info-step-num">2</div>
+            <div class="info-step-text">
+              <strong>Select Your Film</strong>
+              <p>Drop in any MP4. Full game film preferred — CourtIQ works best with complete footage.</p>
+            </div>
+          </div>
+
+          <div class="info-step">
+            <div class="info-step-num">3</div>
+            <div class="info-step-text">
+              <strong>Upload Directly to Cloud</strong>
+              <p>Your file goes straight to secure cloud storage — fast, no file size limits, no middleman.</p>
+            </div>
+          </div>
+
+          <div class="info-step">
+            <div class="info-step-num">4</div>
+            <div class="info-step-text">
+              <strong>Get Your Report</strong>
+              <p>CourtIQ tags every possession and generates your scouting report automatically.</p>
+            </div>
+          </div>
+
+          <div class="info-divider"></div>
+
+          <p class="info-note">
+            <strong>Supported formats:</strong> MP4, MOV, AVI<br />
+            <strong>Best results:</strong> Full-game, wide-angle footage<br /><br />
+            Questions? <a href="mailto:support@sportsiqus.com" style="color:var(--orange);">support@sportsiqus.com</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="logo.png" alt="SportsIQ" />
+        <p>AI Sports Intelligence — turning film into winning decisions, automatically.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="upload.html">Upload Film</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:support@sportsiqus.com">support@sportsiqus.com</a></li>
+          <li><a href="contact.html">Request a Demo</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 SportsIQ Inc. All rights reserved.</p>
+      <p>Built for basketball. Built for coaches.</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script type="module" src="uploadHelper.js"></script>
+  <script type="module">
+    import { uploadGameVideo } from './uploadHelper.js';
+
+    // ── DOM refs ──
+    const dropZone      = document.getElementById('drop-zone');
+    const fileInput     = document.getElementById('file-input');
+    const fileNameDisp  = document.getElementById('file-name-display');
+    const submitBtn     = document.getElementById('submit-btn');
+    const progressWrap  = document.getElementById('progress-wrap');
+    const progressFill  = document.getElementById('progress-fill');
+    const progressPct   = document.getElementById('progress-pct');
+    const progressStage = document.getElementById('progress-stage');
+    const statusMsg     = document.getElementById('status-msg');
+    const formCard      = document.getElementById('upload-form-card');
+    const successPanel  = document.getElementById('success-panel');
+    const successGameId = document.getElementById('success-game-id');
+
+    let selectedFile = null;
+
+    // ── Drag & drop ──
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) setFile(file);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) setFile(fileInput.files[0]);
+    });
+
+    function setFile(file) {
+      selectedFile = file;
+      fileNameDisp.textContent = `${file.name} (${formatBytes(file.size)})`;
+      validateForm();
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+      return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    }
+
+    // ── Form validation ──
+    ['team-id', 'game-date', 'opponent'].forEach(id => {
+      document.getElementById(id).addEventListener('input', validateForm);
+    });
+
+    function validateForm() {
+      const teamId   = document.getElementById('team-id').value.trim();
+      const gameDate = document.getElementById('game-date').value;
+      const opponent = document.getElementById('opponent').value.trim();
+      submitBtn.disabled = !(teamId && gameDate && opponent && selectedFile);
+    }
+
+    // ── Upload ──
+    submitBtn.addEventListener('click', async () => {
+      const teamId   = document.getElementById('team-id').value.trim();
+      const gameDate = document.getElementById('game-date').value;
+      const opponent = document.getElementById('opponent').value.trim();
+      const location = document.getElementById('location').value.trim();
+
+      if (!teamId || !gameDate || !opponent || !selectedFile) return;
+
+      setStatus('', '');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+      showProgress(true);
+      setProgressStage('Preparing upload...');
+      setProgress(0);
+
+      try {
+        const result = await uploadGameVideo({
+          file:     selectedFile,
+          teamId,
+          gameDate,
+          opponent,
+          location: location || undefined,
+          onProgress: (pct) => {
+            setProgressStage('Uploading film...');
+            setProgress(pct);
+          },
+        });
+
+        setProgress(100);
+        setProgressStage('Upload complete');
+
+        // Small delay so user sees 100% before success panel
+        setTimeout(() => {
+          formCard.style.display = 'none';
+          successPanel.classList.add('visible');
+          successGameId.textContent = `Game ID: ${result.gameId}`;
+        }, 600);
+
+      } catch (err) {
+        console.error('Upload failed:', err);
+        showProgress(false);
+        setStatus('error', `Upload failed: ${err.message || 'Please check your connection and try again.'}`);
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        validateForm();
+      }
+    });
+
+    // ── Helpers ──
+    function setProgress(pct) {
+      progressFill.style.width = `${pct}%`;
+      progressPct.textContent  = `${Math.round(pct)}%`;
+    }
+    function setProgressStage(text) {
+      progressStage.textContent = text;
+    }
+    function showProgress(show) {
+      progressWrap.classList.toggle('visible', show);
+    }
+    function setStatus(type, msg) {
+      statusMsg.className  = 'status-msg' + (type ? ` ${type} visible` : '');
+      statusMsg.textContent = msg;
+    }
+
+    // ── Reset ──
+    window.resetForm = function() {
+      selectedFile = null;
+      fileInput.value = '';
+      fileNameDisp.textContent = '';
+      document.getElementById('team-id').value  = '';
+      document.getElementById('game-date').value = '';
+      document.getElementById('opponent').value  = '';
+      document.getElementById('location').value  = '';
+      setStatus('', '');
+      showProgress(false);
+      setProgress(0);
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('loading');
+      formCard.style.display = 'block';
+      successPanel.classList.remove('visible');
+    };
+  </script>
+
+</body>
+</html>
