@@ -216,18 +216,9 @@
       stroke-linejoin: round;
     }
 
-    /* Nav active state for Login link */
-    nav .nav-links .login-nav-link {
-      background: var(--orange, #ff5a00);
-      color: #fff !important;
-      padding: 7px 18px;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    nav .nav-links .login-nav-link:hover {
-      background: #e04e00;
+    /* Nav active state for Login link — matches how every other page marks its active item */
+    nav .nav-links .login-nav-link.active {
+      color: var(--orange, #F47B20);
     }
 
     @media (max-width: 520px) {
