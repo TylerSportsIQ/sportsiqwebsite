@@ -24,7 +24,7 @@
 // CONFIG — update this to your backend URL
 // before pilot, Aidan will provide the EC2 address
 // ─────────────────────────────────────────────
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = "https://api.sportsiqus.com";
 
 /**
  * Main upload function.
